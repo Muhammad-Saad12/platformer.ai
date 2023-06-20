@@ -113,6 +113,8 @@ addPlayer(playerState) {
     // 添加游戏背景
     this.add.tileSprite(0, 0, worldLayer.width, 500, 'background-clouds')
 
+   
+
     // 添加游戏说明
     this.add.bitmapText(16, 100, 'font', config.helpText, 8).setDepth(100)
 
@@ -237,17 +239,21 @@ addPlayer(playerState) {
           }else if (key === "down") {
             // player.sprite.body.setVelocityX(160);
             this.simulateKeyPress(Phaser.Input.Keyboard.KeyCodes.DOWN);
+          }else if (key === "fireBall") {
+            // player.sprite.body.setVelocityX(160);
+            this.simulateKeyPress(Phaser.Input.Keyboard.KeyCodes.Z);
           }
           // if (key === "up" && player.sprite.body.onFloor()) {
           //   // player.sprite.body.setVelocityY(-330);
           // }
         } else if (event === "keyUp") {
-          if (key === "left" || key === "right"||key === "up" || key === "down") {
+          if (key === "left" || key === "right"||key === "up" || key === "down"||key === "fireBall") {
             // player.sprite.body.setVelocityX(0);
             this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.LEFT);
             this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.RIGHT);
             this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.UP);
             this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.DOWN);
+            this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.Z);
 
           }
           //   if (key == "up") {
@@ -261,7 +267,8 @@ addPlayer(playerState) {
       }
     // }
 
-
+    
+    
     mario.update(time, delta, cursors)
     enemyGroup.update(time, delta, mario)
     powerUpGroup.update(time, delta, mario)

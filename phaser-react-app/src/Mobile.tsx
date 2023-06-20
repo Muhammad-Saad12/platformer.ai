@@ -5,6 +5,7 @@ import {
 } from "playroomkit";
 
 import "./snes.css";
+// import "./nes.css";
 
 const TestingWasdController = ({ handleButtonPress }) => {
   return (
@@ -38,9 +39,12 @@ const TestingWasdController = ({ handleButtonPress }) => {
 };
 const SnesController = ({ handleButtonPress }) => {
   return (
-    <div className="container" style={{
-      transform: 'scale(1.5)'
-    }}>
+    <div>
+    <div className="container" 
+    // style={{
+    //   transform: 'scale(1.5)'
+    // }}
+    >
       <div className="snes">
         <div className="left">
           <div className="pad">
@@ -89,7 +93,13 @@ const SnesController = ({ handleButtonPress }) => {
             <div className="group-1">
               <button className="green"></button>
 
-              <button className="blue"></button>
+              <button className="blue"
+               onTouchStart={() => handleButtonPress("fireball", "keyDown")}
+               onTouchEnd={() => handleButtonPress("fireball", "keyUp")}
+ 
+              >
+             
+              </button>
             </div>
             <div className="group-2">
               <button className="yellow"></button>
@@ -104,6 +114,10 @@ const SnesController = ({ handleButtonPress }) => {
         </div>
       </div>
     </div>
+    <div>
+      
+</div>
+</div>
   );
 };
 const NesController = ({ onKeyDown, onKeyUp }) => {};

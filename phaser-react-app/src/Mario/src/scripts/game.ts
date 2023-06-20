@@ -4,13 +4,14 @@ import PreloadScene from './scenes/preloadScene'
 
 // @ts-ignore
 import {  insertCoin } from "playroomkit";
-
+//400
 const DEFAULT_WIDTH = 400
 const DEFAULT_HEIGHT = 240
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   backgroundColor: '#6888ff',
+  
   render: {
     pixelArt: true,
     roundPixels: true,
@@ -19,8 +20,9 @@ const config: Phaser.Types.Core.GameConfig = {
     parent: 'phaser-game',
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: DEFAULT_WIDTH,
-    height: DEFAULT_HEIGHT,
+    
+    width:  window.innerWidth,
+    height: window.innerHeight,
   },
   scene: [PreloadScene, MainScene],
   physics: {
@@ -31,6 +33,7 @@ const config: Phaser.Types.Core.GameConfig = {
     },
   },
 }
+
 
 window.addEventListener('load', async () => {
   try {
