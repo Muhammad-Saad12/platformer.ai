@@ -21,6 +21,10 @@ const defaultOptions = {
  */
 export class Move implements Power {
   private options = defaultOptions
+  private up = null
+  private right = null
+  private left = null
+  private down = null
 
   constructor(player: Player, options = {}) {
     this.options = { ...defaultOptions, ...options }

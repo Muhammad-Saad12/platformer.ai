@@ -54,6 +54,7 @@ export class PowerUp extends Phaser.GameObjects.Sprite {
   public overlap(player: Player, callback: Function) {
     // @ts-ignore
     this.scene.physics.add.overlap(this, player, (powerUp: PowerUp, player: Player) => {
+      console.log('powerUp', powerUp)
       callback?.(powerUp, player)
       this.onOverlap(powerUp, player)
     })

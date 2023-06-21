@@ -36,7 +36,7 @@ export class PowerManage {
     }
 
     if (!this.get(powerClass)) {
-      this.powerMap.set(powerClass, createPower())
+      this.powerMap.set(powerClass, createPower(powerClass))
     }
 
     return this

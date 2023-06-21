@@ -1,6 +1,6 @@
 import Player from '../objects/player'
 import { Enemy } from '../objects/enemies'
-import { Power } from './index'
+import { Fire, Power } from './index'
 
 /**
  * 身体变大的能力
@@ -63,7 +63,8 @@ export class Large implements Power {
    */
   private toLarge(player: Player) {
     player.y -= 8
-    this.changeSize(player, 'grow', 'Super', this.largeSize)
+    console.log("toLarge", player.powers.has(Fire))
+    this.changeSize(player, 'grow', (player.powers.has(Fire) ? 'Fire' : 'Super'), this.largeSize)
   }
 
   /**

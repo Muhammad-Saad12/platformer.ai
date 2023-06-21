@@ -20,6 +20,40 @@ import { container } from 'tsyringe'
 import { onPlayerJoin, insertCoin, isHost, myPlayer } from "playroomkit";
 
 
+// mapping for player keys
+const playerKeys = [
+    {
+      up:Phaser.Input.Keyboard.KeyCodes.UP,
+      down:Phaser.Input.Keyboard.KeyCodes.DOWN,
+      left:Phaser.Input.Keyboard.KeyCodes.LEFT,
+      right:Phaser.Input.Keyboard.KeyCodes.RIGHT,
+      space:Phaser.Input.Keyboard.KeyCodes.UP,
+    },
+    {
+      up:Phaser.Input.Keyboard.KeyCodes.W,
+      down:Phaser.Input.Keyboard.KeyCodes.S,
+      left:Phaser.Input.Keyboard.KeyCodes.A,
+      right:Phaser.Input.Keyboard.KeyCodes.D,
+      space:Phaser.Input.Keyboard.KeyCodes.W,
+    },
+    {
+      up:Phaser.Input.Keyboard.KeyCodes.T,
+      down:Phaser.Input.Keyboard.KeyCodes.G,
+      left:Phaser.Input.Keyboard.KeyCodes.F,
+      right:Phaser.Input.Keyboard.KeyCodes.H,
+      space:Phaser.Input.Keyboard.KeyCodes.T,
+    },
+    {
+      up:Phaser.Input.Keyboard.KeyCodes.I,
+      down:Phaser.Input.Keyboard.KeyCodes.K,
+      left:Phaser.Input.Keyboard.KeyCodes.J,
+      right:Phaser.Input.Keyboard.KeyCodes.L,
+      space:Phaser.Input.Keyboard.KeyCodes.I,
+    },
+]
+  
+
+
 type SceneData = {
   [prop: string]: any
 }
@@ -27,6 +61,7 @@ type SceneData = {
 export default class MainScene extends Phaser.Scene {
   music: Phaser.Sound.BaseSound
   cursors: Phaser.Types.Input.Keyboard.CursorKeys
+  cursors1: any
   animatedTiles: AnimatedTiles
   hud: Hud
   mario: Player
@@ -106,7 +141,12 @@ addPlayer(playerState) {
 // this.simulateKeyPress(Phaser.Input.Keyboard.KeyCodes.UP);
 // })
 
+
+
+
     this.cursors = this.input.keyboard.createCursorKeys()
+    this.cursors1 = this.input.keyboard.addKeys(playerKeys[1]);
+         
 
     // 添加背景音乐
     this.music = this.sound.add('overworld')
@@ -147,7 +187,7 @@ addPlayer(playerState) {
       allowPowers: [Jump, Move, Invincible, Large, Fire, EnterPipe, HitBrick],
     }).on('die', () => {
       this.time.delayedCall(3000, () => {
-        if (this.hud.getValue('lives') === 0) {
+        if (Number(this.hud.getValue('lives')) <= 0) {
           this.gameOver()
         } else {
           this.restartGame()
@@ -164,7 +204,7 @@ addPlayer(playerState) {
       allowPowers: [Jump, Move, Invincible, Large, Fire, EnterPipe, HitBrick],
     }).on('die', () => {
       this.time.delayedCall(3000, () => {
-        if (this.hud.getValue('lives') === 0) {
+        if (Number(this.hud.getValue('lives')) <= 0) {
           this.gameOver()
         } else {
           this.restartGame()
@@ -203,8 +243,10 @@ addPlayer(playerState) {
       .register('Map', { useValue: map })
       .register('WorldLayer', { useValue: worldLayer })
       .register('Cursors', { useValue: this.cursors })
+      // .register('Cursors', { useValue: this.cursors1 })
       .register(Brick, { useValue: brick })
       .register(Player, { useValue: this.mario })
+      // .register(Player, { useValue: this.mario1 })
       .register(EnemyGroup, { useValue: this.enemyGroup })
       .register(PowerUpGroup, { useValue: this.powerUpGroup })
 
@@ -217,13 +259,13 @@ addPlayer(playerState) {
       this.mario1.powers
       .add(Move, () => new Move(this.mario1))
       .add(Jump, () => new Jump(this.mario1))
-      .add(EnterPipe, () => new EnterPipe(this.cursors, this.dests, this.rooms))
+      .add(EnterPipe, () => new EnterPipe(this.cursors1, this.dests, this.rooms))
       .add(HitBrick, () => new HitBrick(this.mario1, ['up']))
 
     const camera = this.cameras.main
     const room = this.rooms.room1
     camera.setBounds(room.x, room.y, room.width, room.height).startFollow(this.mario)
-    camera.setBounds(room.x, room.y, room.width, room.height).startFollow(this.mario1)
+    // camera.setBounds(room.x, room.y, room.width, room.height).startFollow(this.mario1)
     camera.roundPixels = true
 
     this.physics.add.collider(this.powerUpGroup, worldLayer)
@@ -244,9 +286,71 @@ addPlayer(playerState) {
     this.physics.add.collider(brick, this.powerUpGroup)
   }
 
+  simulator(player,_playerKeys){
+    
+   
+      const { key, event } = player.state.getState("keyPress") || {};
+      if (event === "keyDown") {
+        if (key === "left") {
+          // player.sprite.body.setVelocityX(-160);
+          this.simulateKeyPress(_playerKeys.left);
+        }
+        if (key === "up") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyPress(_playerKeys.up);
+        }
+        if (key === "right") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyPress(_playerKeys.right);
+        }
+        if (key === "down") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyPress(_playerKeys.down);
+        }
+        if (key === "x") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyPress(34);
+        }
+        // if (key === "up" && player.sprite.body.onFloor()) {
+        //   // player.sprite.body.setVelocityY(-330);
+        // }
+      }
+      if (event === "keyUp") {
+        if (key === "left") {
+          // player.sprite.body.setVelocityX(0);
+          this.simulateKeyRelease(_playerKeys.left);
+        }
+        if (key === "up") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyRelease(_playerKeys.up);
+        }
+        if (key === "right") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyRelease(_playerKeys.right);
+        }
+        if (key === "down") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyRelease(_playerKeys.down);
+        }
+        if (key === "x") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyRelease(_playerKeys.x);
+        }
+
+        //   if (key == "up") {
+        //       player.sprite.body.setVelocityY(0);
+        //     }
+      
+      // player.state.setState("pos", {
+      //   x: player.sprite.x,
+      //   y: player.sprite.y,
+      // });
+    }
+  }
+
   update(time: number, delta: number) {
     if (this.physics.world.isPaused) return
-    const { animatedTiles, hud, mario, cursors, enemyGroup, powerUpGroup } = this
+    const { animatedTiles, hud, mario, mario1, cursors, cursors1, enemyGroup, powerUpGroup } = this
     animatedTiles.update(delta)
     hud.update()
 
@@ -258,58 +362,33 @@ addPlayer(playerState) {
     //   this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.UP);
     // },5000);
 
-
+    
     // if () {
-      for (const player of this.players) {
-        const { key, event } = player.state.getState("keyPress") || {};
-        if (event === "keyDown") {
-          if (key === "left") {
-            // player.sprite.body.setVelocityX(-160);
-            this.simulateKeyPress(Phaser.Input.Keyboard.KeyCodes.LEFT);
-          }
-          else if (key === "up") {
-            // player.sprite.body.setVelocityX(160);
-            this.simulateKeyPress(Phaser.Input.Keyboard.KeyCodes.UP);
-          }
-          else if (key === "right") {
-            // player.sprite.body.setVelocityX(160);
-            this.simulateKeyPress(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-          }else if (key === "down") {
-            // player.sprite.body.setVelocityX(160);
-            this.simulateKeyPress(Phaser.Input.Keyboard.KeyCodes.DOWN);
-          }else if (key === "fireBall") {
-            // player.sprite.body.setVelocityX(160);
-            this.simulateKeyPress(Phaser.Input.Keyboard.KeyCodes.Z);
-          }
-          // if (key === "up" && player.sprite.body.onFloor()) {
-          //   // player.sprite.body.setVelocityY(-330);
-          // }
-        } else if (event === "keyUp") {
-          if (key === "left" || key === "right"||key === "up" || key === "down"||key === "fireBall") {
-            // player.sprite.body.setVelocityX(0);
-            this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.LEFT);
-            this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-            this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.UP);
-            this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.DOWN);
-            this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.Z);
-
-          }
-          //   if (key == "up") {
-          //       player.sprite.body.setVelocityY(0);
-          //     }
-        }
-        // player.state.setState("pos", {
-        //   x: player.sprite.x,
-        //   y: player.sprite.y,
-        // });
-      }
+      
+    if (this.players[0]){
+      this.simulator(this.players[0],playerKeys[0]);
+    }
+    if (this.players[1]){
+      this.simulator(this.players[1],playerKeys[1]);
+    }
     // }
 
     
     
     mario.update(time, delta, cursors)
+    // try {
+    cursors1?.up &&
+      cursors1?.down &&
+        cursors1?.left &&
+          cursors1?.right && mario1.update(time, delta, cursors1)
+
+    // }catch(err){
+    //   console.log("cursors1", cursors1)
+    //   console.log(err)
+    // }
     enemyGroup.update(time, delta, mario)
     powerUpGroup.update(time, delta, mario)
+    powerUpGroup.update(time, delta, mario1)
   }
 
   /**
@@ -414,17 +493,18 @@ addPlayer(playerState) {
    */
   private createPowerUp(name: string, x: number, y: number) {
     const mario = this.mario
+    const mario1 = this.mario1
     let params: any[] = []
 
     switch (name) {
       case 'mushroom':
-        params = mario.powers.has(Large) ? [Flower, Fire] : [Mushroom, Large, { type: 'super' }]
+        params = this.mario.powers.has(Large) || this.mario1.powers.has(Large) ? [Flower, [Fire, Large], { type: 'super' }] : [Mushroom, [Large], { type: 'super' }]
         break
       case 'star':
-        params = [Star, Invincible]
+        params = [Star, [Invincible]]
         break
       case '1up':
-        params = [Mushroom, null, { type: '1up' }, () => this.hud.incDec('lives', 1)]
+        params = [Mushroom, [null], { type: '1up' }, () => this.hud.incDec('lives', 1)]
         break
       default:
         new CoinSpin(this, x, y, 'atlas').spin()
@@ -432,11 +512,37 @@ addPlayer(playerState) {
 
     const [PowerUp, Power, options, onOverlap] = params
     if (PowerUp) {
+      console.log("createPowerUp")
       const powerUp = new PowerUp({ scene: this, x, y, texture: 'atlas', ...options }).overlap(
-        mario,
-        onOverlap || (() => mario.powers.add(Power, () => new Power(mario)))
+        this.mario,
+        onOverlap || (() => {
+          for (let i = 0; i < Power.length; i++) {
+            // setTimeout(() => {
+            // if (!this.mario.powers.has(Power[i])) {
+              this.mario.powers.add(Power[i], (PowerClass) => new PowerClass(this.mario))
+              //   }
+          // }, 500*i)
+          }
+          
+        })
       )
+
+      const powerUp1 = new PowerUp({ scene: this, x, y, texture: 'atlas', ...options }).overlap(
+        this.mario1,
+        onOverlap || (() => {
+          for (let i = 0; i < Power.length; i++) {
+            // setTimeout(() => {
+            //   if (!this.mario1.powers.has(Power[i])) {
+                this.mario1.powers.add(Power[i], (PowerClass) => new PowerClass(this.mario1))
+            //   }
+            // }, 500*i)
+          }
+          
+        })
+      )
+
       this.powerUpGroup.add(powerUp)
+      this.powerUpGroup.add(powerUp1)
     }
   }
 

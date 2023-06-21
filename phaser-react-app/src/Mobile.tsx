@@ -94,8 +94,8 @@ const SnesController = ({ handleButtonPress }) => {
               <button className="green"></button>
 
               <button className="blue"
-               onTouchStart={() => handleButtonPress("fireball", "keyDown")}
-               onTouchEnd={() => handleButtonPress("fireball", "keyUp")}
+               onTouchStart={() => handleButtonPress("x", "keyDown")}
+               onTouchEnd={() => handleButtonPress("x", "keyUp")}
  
               >
              
@@ -132,7 +132,7 @@ function DirectionButtons() {
     myPlayroomPlayer.setState("keyPress", {
       key,
       event,
-    });
+    }, true);
     console.log(myPlayroomPlayer.getState("keyPress"));
   };
 
