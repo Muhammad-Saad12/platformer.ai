@@ -190,4 +190,9 @@ export default class Player extends Phaser.GameObjects.Sprite {
   colliderWorld(tile: Phaser.Tilemaps.Tile) {
     return this.powers.allowPowers.some((name) => this.powers.get(name)?.colliderWorld?.(this, tile))
   }
+  // colliderWorld(tile: Phaser.Tilemaps.Tile) {
+  //   return this.powers.allowPowers.some((name) => this.powers.get(name)?.colliderWorld?.(this, tile));
+  // }
+
+  
 }

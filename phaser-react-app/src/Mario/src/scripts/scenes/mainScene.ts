@@ -1,4 +1,5 @@
 import config from '../config'
+import config1 from '../config1'
 import AnimatedTiles from '../helpers/animatedTiles'
 import Debug from '../helpers/debug'
 import CountDown from '../helpers/countdown'
@@ -29,6 +30,7 @@ export default class MainScene extends Phaser.Scene {
   animatedTiles: AnimatedTiles
   hud: Hud
   mario: Player
+  mario1: Player
   powerUpGroup: PowerUpGroup
   enemyGroup: EnemyGroup
   rooms: rooms = {}
@@ -153,9 +155,27 @@ addPlayer(playerState) {
       })
     })
 
+    this.mario1 = new Player({
+      scene: this,
+      texture: 'atlas',
+      frame: 'mario/stand',
+      x: config1.initX,
+      y: config1.initY,
+      allowPowers: [Jump, Move, Invincible, Large, Fire, EnterPipe, HitBrick],
+    }).on('die', () => {
+      this.time.delayedCall(3000, () => {
+        if (this.hud.getValue('lives') === 0) {
+          this.gameOver()
+        } else {
+          this.restartGame()
+        }
+      })
+    })
+
     const endPoint = worldLayer.findByIndex(5)
     // 终点旗杆
     new Flag(this, endPoint.pixelX, endPoint.pixelY).overlap(this.mario, () => this.restartGame(false))
+    new Flag(this, endPoint.pixelX, endPoint.pixelY).overlap(this.mario1, () => this.restartGame(false))
 
     // 游戏倒计时
     new CountDown(this)
@@ -164,6 +184,13 @@ addPlayer(playerState) {
         this.hud.setValue('time', time)
       })
       .on('end', () => this.mario.die())
+
+      new CountDown(this)
+      .start(config1.playTime)
+      .on('interval', (time: number) => {
+        this.hud.setValue('time', time)
+      })
+      .on('end', () => this.mario1.die())
 
     // 调试
     new Debug({ scene: this, layer: worldLayer })
@@ -187,9 +214,16 @@ addPlayer(playerState) {
       .add(EnterPipe, () => new EnterPipe(this.cursors, this.dests, this.rooms))
       .add(HitBrick, () => new HitBrick(this.mario, ['up']))
 
+      this.mario1.powers
+      .add(Move, () => new Move(this.mario1))
+      .add(Jump, () => new Jump(this.mario1))
+      .add(EnterPipe, () => new EnterPipe(this.cursors, this.dests, this.rooms))
+      .add(HitBrick, () => new HitBrick(this.mario1, ['up']))
+
     const camera = this.cameras.main
     const room = this.rooms.room1
     camera.setBounds(room.x, room.y, room.width, room.height).startFollow(this.mario)
+    camera.setBounds(room.x, room.y, room.width, room.height).startFollow(this.mario1)
     camera.roundPixels = true
 
     this.physics.add.collider(this.powerUpGroup, worldLayer)
@@ -198,7 +232,11 @@ addPlayer(playerState) {
     // @ts-ignore
     this.physics.add.collider(this.mario, worldLayer, this.playerColliderWorld, undefined, this)
     // @ts-ignore
+    this.physics.add.collider(this.mario1, worldLayer, this.playerColliderWorld, undefined, this)
+    // @ts-ignore
     this.physics.add.overlap(this.mario, this.enemyGroup, this.playerOverlapEnemy, undefined, this)
+    // @ts-ignore
+    this.physics.add.overlap(this.mario1, this.enemyGroup, this.playerOverlapEnemy, undefined, this)
     // @ts-ignore
     this.physics.add.overlap(this.enemyGroup, this.enemyGroup, this.enemyOverlapEnemy, undefined, this)
     // @ts-ignore
