@@ -31,7 +31,7 @@ export class Star extends PowerUp {
   }
 
   onDisplay() {
-    this.body.setAllowGravity(true).setBounce(1, 1).setMaxVelocity(100, 200).setVelocity(200)
+    this.body?.setAllowGravity(true).setBounce(1, 1).setMaxVelocity(100, 200).setVelocity(200)
   }
 
   @score(1000)

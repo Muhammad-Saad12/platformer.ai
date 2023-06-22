@@ -25,7 +25,7 @@ export class Mushroom extends PowerUp {
   }
 
   onDisplay() {
-    this.body.setAllowGravity(true).setBounce(1, 0).setVelocityX(this.speed)
+    this.body?.setAllowGravity(true).setBounce(1, 0).setVelocityX(this.speed)
   }
 
   @score(1000)

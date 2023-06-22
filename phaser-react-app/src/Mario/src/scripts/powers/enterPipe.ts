@@ -5,11 +5,11 @@ import Player from '../objects/player'
  * 进出管道能力
  */
 export class EnterPipe implements Power {
-  private cursors: Phaser.Types.Input.Keyboard.CursorKeys
+  private cursors: Phaser.Types.Input.Keyboard.KeyComboConfig
   private rooms: rooms
   private dests: dests
 
-  constructor(cursors: Phaser.Types.Input.Keyboard.CursorKeys, dests: dests, rooms: rooms) {
+  constructor(cursors: Phaser.Types.Input.Keyboard.KeyComboConfig, dests: dests, rooms: rooms) {
     this.cursors = cursors
     this.dests = dests
     this.rooms = rooms

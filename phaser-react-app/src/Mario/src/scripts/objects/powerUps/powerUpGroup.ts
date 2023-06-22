@@ -24,7 +24,7 @@ export class PowerUpGroup extends Phaser.GameObjects.Group {
 
     // @ts-ignore
     this.children.iterate((powerUp: PowerUp) => {
-      if (powerUp) {
+      if (powerUp && powerUp.body) {
         // 超出与玩家的最大范围时，直接销毁道具
         if (
           Math.abs(player.x - powerUp.x) > this.maxX + canvasWidth ||

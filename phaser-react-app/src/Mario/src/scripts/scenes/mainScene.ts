@@ -42,7 +42,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   addingPlayerCursors() {
-    const offset = this.players.length * 5;
+    const offset = this.players.length * 10;
     return this.input.keyboard.addKeys({
       up: offset + 0,
       down: offset + 1,
@@ -83,6 +83,11 @@ export default class MainScene extends Phaser.Scene {
 
   // Add another mario to the game
   addPlayer(playerState) {
+    console.log("printing playerstate",playerState)
+    console.log("printing players",this.players);
+
+    let existingPlayerIndex = Array.isArray(this.players) ? this.players.findIndex((p) => p.state.id === playerState.id) : -1
+
     const cursors = this.addingPlayerCursors();
     const mario = new Player({
       scene: this,
@@ -116,9 +121,8 @@ export default class MainScene extends Phaser.Scene {
     // @ts-ignore
     this.physics.add.overlap(mario, this.enemyGroup, this.playerOverlapEnemy, undefined, this)
     // @ts-ignore
-    this.physics.add.collider(this.brick, this.enemyGroup, (props) => {
-      console.log("props are", props);
-      this.brickColliderEnemy(props.brick, props.enemy, mario)
+    this.physics.add.collider(this.brick, this.enemyGroup, (brick: Brick, enemy: Enemy) => {
+      this.brickColliderEnemy(brick, enemy, mario)
     }, undefined, this)
   
     new CountDown(this)
@@ -129,25 +133,44 @@ export default class MainScene extends Phaser.Scene {
     .on('end', () => mario.die())
 
     container
-      .register('Cursors', { useValue: cursors })
-      .register(Player, { useValue: mario })
+      .register('Cursors_'+ playerState.id, { useValue: cursors })
+      .register('Player_' + playerState.id, { useValue: mario })
 
     const camera = this.cameras.main
     const room = this.rooms.room1
     camera.setBounds(room.x, room.y, room.width, room.height).startFollow(mario)
 
+    console.log("existing player index",existingPlayerIndex);
+    if (existingPlayerIndex === -1) {
     this.players.push({
       // sprite,
       state: playerState,
       cursors,
       mario,
     })
+  } 
+  else if (this.players[existingPlayerIndex]) {
+      this.players[existingPlayerIndex] = {
+        // sprite,
+        ...this.players[existingPlayerIndex],
+        state: playerState,
+        // cursors,
+        mario,
+    }
+  }
+
     playerState.onQuit(() => {
       // sprite.destroy();
-      this.players = this.players.filter((p) => p.state !== playerState)
-      this.players.forEach((p, i) => {
+      let toKill = this.players.filter((p) => p.state.id === playerState.id)
+      toKill.forEach((p, i) => {
         p.mario.destroy()
       })
+
+      this.players = this.players.filter((p) => p.state.id !== playerState.id)
+
+      camera.setBounds(room.x, room.y, room.width, room.height).startFollow(this.players[this.players.length - 1].mario)
+
+
     })
 
   }
@@ -271,8 +294,11 @@ export default class MainScene extends Phaser.Scene {
       const player = this.players[i]
       console.log("player", player) 
       enemyGroup.update(time, delta, player.mario)
-      powerUpGroup.update(time, delta, player.mario)
-      player.mario.body ? player.mario.update(time, delta, player.cursors) : console.log("player.mario.body is undefined", player.mario)
+      if (player.mario.body) {
+        // player.mario.body.checkCollision.none = false
+        powerUpGroup.update(time, delta, player.mario)
+        player.mario.update(time, delta, player.cursors)
+      }
       this.simulator(player)
     }
 
@@ -401,9 +427,10 @@ export default class MainScene extends Phaser.Scene {
 
     const [PowerUp, Power, options, onOverlap] = params
     if (PowerUp) {
-      console.log('createPowerUp')
+      console.log('createPowerUp', PowerUp)
 
       const powerUps = marios.map((mario) => {
+        if (!mario.body) return
         return new PowerUp({ scene: this, x, y, texture: 'atlas', ...options }).overlap(
         mario,
         onOverlap ||
@@ -412,7 +439,7 @@ export default class MainScene extends Phaser.Scene {
               mario.powers.add(Power[i], () => new Power[i](mario))
             }
           })
-      )})
+      )}).filter(Boolean)
 
       powerUps.forEach((powerUp) => {
         this.powerUpGroup.add(powerUp)
