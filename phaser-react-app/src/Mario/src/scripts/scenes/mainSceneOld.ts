@@ -17,39 +17,42 @@ import { arrayProps2ObjProps } from '../utils'
 import { container } from 'tsyringe'
 
 // @ts-ignore
-import { onPlayerJoin, insertCoin, isHost, myPlayer } from 'playroomkit'
+import { onPlayerJoin, insertCoin, isHost, myPlayer } from "playroomkit";
+
 
 // mapping for player keys
 const playerKeys = [
-  // {
-  //   up:Phaser.Input.Keyboard.KeyCodes.UP,
-  //   down:Phaser.Input.Keyboard.KeyCodes.DOWN,
-  //   left:Phaser.Input.Keyboard.KeyCodes.LEFT,
-  //   right:Phaser.Input.Keyboard.KeyCodes.RIGHT,
-  //   space:Phaser.Input.Keyboard.KeyCodes.UP,
-  // },
-  // {
-  //   up:Phaser.Input.Keyboard.KeyCodes.W,
-  //   down:Phaser.Input.Keyboard.KeyCodes.S,
-  //   left:Phaser.Input.Keyboard.KeyCodes.A,
-  //   right:Phaser.Input.Keyboard.KeyCodes.D,
-  //   space:Phaser.Input.Keyboard.KeyCodes.W,
-  // },
-  // {
-  //   up:Phaser.Input.Keyboard.KeyCodes.T,
-  //   down:Phaser.Input.Keyboard.KeyCodes.G,
-  //   left:Phaser.Input.Keyboard.KeyCodes.F,
-  //   right:Phaser.Input.Keyboard.KeyCodes.H,
-  //   space:Phaser.Input.Keyboard.KeyCodes.T,
-  // },
-  // {
-  //   up:Phaser.Input.Keyboard.KeyCodes.I,
-  //   down:Phaser.Input.Keyboard.KeyCodes.K,
-  //   left:Phaser.Input.Keyboard.KeyCodes.J,
-  //   right:Phaser.Input.Keyboard.KeyCodes.L,
-  //   space:Phaser.Input.Keyboard.KeyCodes.I,
-  // },
+    {
+      up:Phaser.Input.Keyboard.KeyCodes.UP,
+      down:Phaser.Input.Keyboard.KeyCodes.DOWN,
+      left:Phaser.Input.Keyboard.KeyCodes.LEFT,
+      right:Phaser.Input.Keyboard.KeyCodes.RIGHT,
+      space:Phaser.Input.Keyboard.KeyCodes.UP,
+    },
+    {
+      up:Phaser.Input.Keyboard.KeyCodes.W,
+      down:Phaser.Input.Keyboard.KeyCodes.S,
+      left:Phaser.Input.Keyboard.KeyCodes.A,
+      right:Phaser.Input.Keyboard.KeyCodes.D,
+      space:Phaser.Input.Keyboard.KeyCodes.W,
+    },
+    {
+      up:Phaser.Input.Keyboard.KeyCodes.T,
+      down:Phaser.Input.Keyboard.KeyCodes.G,
+      left:Phaser.Input.Keyboard.KeyCodes.F,
+      right:Phaser.Input.Keyboard.KeyCodes.H,
+      space:Phaser.Input.Keyboard.KeyCodes.T,
+    },
+    {
+      up:Phaser.Input.Keyboard.KeyCodes.I,
+      down:Phaser.Input.Keyboard.KeyCodes.K,
+      left:Phaser.Input.Keyboard.KeyCodes.J,
+      right:Phaser.Input.Keyboard.KeyCodes.L,
+      space:Phaser.Input.Keyboard.KeyCodes.I,
+    },
 ]
+  
+
 
 type SceneData = {
   [prop: string]: any
@@ -67,97 +70,48 @@ export default class MainScene extends Phaser.Scene {
   enemyGroup: EnemyGroup
   rooms: rooms = {}
   dests: dests = {}
-  players = []
-  NPlayerKeys:any []
-  NPlayerCursor:any []
-  worldLayer: Phaser.Tilemaps.TilemapLayer
+  players = []; 
 
   constructor() {
     super({ key: 'MainScene' })
   }
 
-  addingPlayerCursors() {
-    const offset = this.players.length * 5;
-    return this.input.keyboard.addKeys({
-      up: offset + 0,
-      down: offset + 1,
-      left: offset + 2,
-      right: offset + 3,
-      space: offset + 4,
-    });
-  }
+      // Simulate pressing a key
+ simulateKeyPress(keyCode) {
+  const keyObj = this.input.keyboard.addKey(keyCode);
+  keyObj.isDown = true;
+  keyObj.timeDown = this.time.now;
+  keyObj.isUp = false;
+  keyObj.timeUp = 0;
+  this.input.keyboard.emit('keydown');
+}
 
-  // Simulate pressing a key
-  simulateKeyPress(keyCode) {
-    const keyObj = this.input.keyboard.addKey(keyCode)
-    keyObj.isDown = true
-    keyObj.timeDown = this.time.now
-    keyObj.isUp = false
-    keyObj.timeUp = 0
-    this.input.keyboard.emit('keydown')
-  }
+// Simulate releasing a key
+ simulateKeyRelease(keyCode) {
+  const keyObj = this.input.keyboard.addKey(keyCode);
+  keyObj.isDown = false;
+  keyObj.timeDown = 0;
+  keyObj.isUp = true;
+  keyObj.timeUp = this.time.now;
+  this.input.keyboard.emit('keyup');
+}
 
-  // Simulate releasing a key
-  simulateKeyRelease(keyCode) {
-    const keyObj = this.input.keyboard.addKey(keyCode)
-    keyObj.isDown = false
-    keyObj.timeDown = 0
-    keyObj.isUp = true
-    keyObj.timeUp = this.time.now
-    this.input.keyboard.emit('keyup')
-  }
 
-  addPlayer(playerState) {
-    // add another mario to the game
-    // const sprite = this.add.rectangle(
-    //   Phaser.Math.Between(100, 500), 200, 50, 50, playerState.getProfile().color.hex);
-    // this.physics.add.existing(sprite, false);
-    // sprite.body.setCollideWorldBounds(true);
-    const cursors = this.addingPlayerCursors();
-    const mario = new Player({
-      scene: this,
-      texture: 'atlas',
-      frame: 'mario/stand',
-      x: config1.initX + (50*(this.players.length+1)),
-      y: config1.initY,
-      allowPowers: [Jump, Move, Invincible, Large, Fire, EnterPipe, HitBrick],
-    }).on('die', () => {
-      this.time.delayedCall(3000, () => {
-        if (Number(this.hud.getValue('lives')) <= 0) {
-          this.gameOver()
-        } else {
-          this.restartGame()
-        }
-      })
-    })
-
-    const endPoint = this.worldLayer.findByIndex(5)
-    // 终点旗杆
-    new Flag(this, endPoint.pixelX, endPoint.pixelY).overlap(mario, () => this.restartGame(false))
-
-    mario.powers
-      .add(Move, () => new Move(mario))
-      .add(Jump, () => new Jump(mario))
-      .add(EnterPipe, () => new EnterPipe(cursors, this.dests, this.rooms))
-      .add(HitBrick, () => new HitBrick(mario, ['up']))
-
-    // @ts-ignore
-    this.physics.add.collider(mario, this.worldLayer, this.playerColliderWorld, undefined, this)
-    // @ts-ignore
-    this.physics.add.overlap(mario, this.enemyGroup, this.playerOverlapEnemy, undefined, this)
-  
-
-    this.players.push({
-      // sprite,
-      state: playerState,
-      cursors,
-      mario,
-    })
-    playerState.onQuit(() => {
-      // sprite.destroy();
-      this.players = this.players.filter((p) => p.state !== playerState)
-    })
-  }
+addPlayer(playerState) {
+  // add another mario to the game
+  // const sprite = this.add.rectangle(
+  //   Phaser.Math.Between(100, 500), 200, 50, 50, playerState.getProfile().color.hex);
+  // this.physics.add.existing(sprite, false);
+  // sprite.body.setCollideWorldBounds(true);
+  this.players.push({
+    // sprite,
+    state: playerState
+  });
+  playerState.onQuit(() => {
+    // sprite.destroy();
+    this.players = this.players.filter(p => p.state !== playerState);
+  });
+}
 
   create(sceneData: SceneData) {
     // @ts-ignore debug
@@ -166,26 +120,33 @@ export default class MainScene extends Phaser.Scene {
     const map = this.make.tilemap({ key: 'map' })
     const tileset = map.addTilesetImage('SuperMarioBros-World1-1', 'tiles')
     const worldLayer = map.createLayer('world', tileset).setCollisionByProperty({ collide: true })
-    this.worldLayer = worldLayer
 
-    onPlayerJoin((playerState) => this.addPlayer(playerState))
 
-    // // Example usage
-    // this.simulateKeyPress(Phaser.Input.Keyboard.KeyCodes.UP);
+    onPlayerJoin(playerState => this.addPlayer(playerState));
 
-    // setTimeout(() => {
-    //   this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.UP);
-    // },5000);
 
-    // with Playroom
 
-    // this.playroomSDK.onKeyDown("W", ()=>{
-    //   console.log("hello world")
-    // this.simulateKeyPress(Phaser.Input.Keyboard.KeyCodes.UP);
-    // })
+// // Example usage
+// this.simulateKeyPress(Phaser.Input.Keyboard.KeyCodes.UP);
 
-    // this.cursors = this.input.keyboard.createCursorKeys()
-    // this.cursors1 = this.input.keyboard.addKeys(playerKeys[1])
+// setTimeout(() => {
+//   this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.UP);
+// },5000);
+
+
+// with Playroom
+
+// this.playroomSDK.onKeyDown("W", ()=>{
+//   console.log("hello world")
+// this.simulateKeyPress(Phaser.Input.Keyboard.KeyCodes.UP);
+// })
+
+
+
+
+    this.cursors = this.input.keyboard.createCursorKeys()
+    this.cursors1 = this.input.keyboard.addKeys(playerKeys[1]);
+         
 
     // 添加背景音乐
     this.music = this.sound.add('overworld')
@@ -193,6 +154,8 @@ export default class MainScene extends Phaser.Scene {
 
     // 添加游戏背景
     this.add.tileSprite(0, 0, worldLayer.width, 500, 'background-clouds')
+
+   
 
     // 添加游戏说明
     this.add.bitmapText(16, 100, 'font', config.helpText, 8).setDepth(100)
@@ -262,7 +225,7 @@ export default class MainScene extends Phaser.Scene {
       })
       .on('end', () => this.mario.die())
 
-    new CountDown(this)
+      new CountDown(this)
       .start(config1.playTime)
       .on('interval', (time: number) => {
         this.hud.setValue('time', time)
@@ -290,13 +253,13 @@ export default class MainScene extends Phaser.Scene {
     this.mario.powers
       .add(Move, () => new Move(this.mario))
       .add(Jump, () => new Jump(this.mario))
-      .add(EnterPipe, () => new EnterPipe(this.players[0]?.cursors, this.dests, this.rooms))
+      .add(EnterPipe, () => new EnterPipe(this.cursors, this.dests, this.rooms))
       .add(HitBrick, () => new HitBrick(this.mario, ['up']))
 
-    this.mario1.powers
+      this.mario1.powers
       .add(Move, () => new Move(this.mario1))
       .add(Jump, () => new Jump(this.mario1))
-      .add(EnterPipe, () => new EnterPipe(this.players[1]?.cursors, this.dests, this.rooms))
+      .add(EnterPipe, () => new EnterPipe(this.cursors1, this.dests, this.rooms))
       .add(HitBrick, () => new HitBrick(this.mario1, ['up']))
 
     const camera = this.cameras.main
@@ -323,62 +286,61 @@ export default class MainScene extends Phaser.Scene {
     this.physics.add.collider(brick, this.powerUpGroup)
   }
 
-  simulator(player) {
-    const _playerKeys = player.cursors;
+  simulator(player,_playerKeys){
     
-    const { key, event } = player.state.getState('keyPress') || {}
-    
-    if (event === 'keyDown') {
-      if (key === 'left') {
-        // player.sprite.body.setVelocityX(-160);
-        this.simulateKeyPress(_playerKeys.left)
+   
+      const { key, event } = player.state.getState("keyPress") || {};
+      if (event === "keyDown") {
+        if (key === "left") {
+          // player.sprite.body.setVelocityX(-160);
+          this.simulateKeyPress(_playerKeys.left);
+        }
+        if (key === "up") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyPress(_playerKeys.up);
+        }
+        if (key === "right") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyPress(_playerKeys.right);
+        }
+        if (key === "down") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyPress(_playerKeys.down);
+        }
+        if (key === "x") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyPress(34);
+        }
+        // if (key === "up" && player.sprite.body.onFloor()) {
+        //   // player.sprite.body.setVelocityY(-330);
+        // }
       }
-      if (key === 'up') {
-        // player.sprite.body.setVelocityX(160);
-        this.simulateKeyPress(_playerKeys.up)
-      }
-      if (key === 'right') {
-        // player.sprite.body.setVelocityX(160);
-        this.simulateKeyPress(_playerKeys.right)
-      }
-      if (key === 'down') {
-        // player.sprite.body.setVelocityX(160);
-        this.simulateKeyPress(_playerKeys.down)
-      }
-      if (key === 'x') {
-        // player.sprite.body.setVelocityX(160);
-        this.simulateKeyPress(34)
-      }
-      // if (key === "up" && player.sprite.body.onFloor()) {
-      //   // player.sprite.body.setVelocityY(-330);
-      // }
-    }
-    if (event === 'keyUp') {
-      if (key === 'left') {
-        // player.sprite.body.setVelocityX(0);
-        this.simulateKeyRelease(_playerKeys.left)
-      }
-      if (key === 'up') {
-        // player.sprite.body.setVelocityX(160);
-        this.simulateKeyRelease(_playerKeys.up)
-      }
-      if (key === 'right') {
-        // player.sprite.body.setVelocityX(160);
-        this.simulateKeyRelease(_playerKeys.right)
-      }
-      if (key === 'down') {
-        // player.sprite.body.setVelocityX(160);
-        this.simulateKeyRelease(_playerKeys.down)
-      }
-      if (key === 'x') {
-        // player.sprite.body.setVelocityX(160);
-        this.simulateKeyRelease(_playerKeys.x)
-      }
+      if (event === "keyUp") {
+        if (key === "left") {
+          // player.sprite.body.setVelocityX(0);
+          this.simulateKeyRelease(_playerKeys.left);
+        }
+        if (key === "up") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyRelease(_playerKeys.up);
+        }
+        if (key === "right") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyRelease(_playerKeys.right);
+        }
+        if (key === "down") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyRelease(_playerKeys.down);
+        }
+        if (key === "x") {
+          // player.sprite.body.setVelocityX(160);
+          this.simulateKeyRelease(_playerKeys.x);
+        }
 
-      //   if (key == "up") {
-      //       player.sprite.body.setVelocityY(0);
-      //     }
-
+        //   if (key == "up") {
+        //       player.sprite.body.setVelocityY(0);
+        //     }
+      
       // player.state.setState("pos", {
       //   x: player.sprite.x,
       //   y: player.sprite.y,
@@ -388,9 +350,11 @@ export default class MainScene extends Phaser.Scene {
 
   update(time: number, delta: number) {
     if (this.physics.world.isPaused) return
-    const { animatedTiles, hud, mario, mario1, enemyGroup, powerUpGroup } = this
+    const { animatedTiles, hud, mario, mario1, cursors, cursors1, enemyGroup, powerUpGroup } = this
     animatedTiles.update(delta)
     hud.update()
+
+
 
     // Example usage
 
@@ -398,40 +362,30 @@ export default class MainScene extends Phaser.Scene {
     //   this.simulateKeyRelease(Phaser.Input.Keyboard.KeyCodes.UP);
     // },5000);
 
+    
     // if () {
-
-    // if (this.players[0]) {
-    //   this.simulator(this.players[0], playerKeys[0])
-    // }
-    // if (this.players[1]) {
-    //   this.simulator(this.players[1], playerKeys[1])
-    // }
-    // }
-
-    if (this.players[0]) {
-      this.simulator(this.players[0]);
-      mario.update(time, delta, this.players[0].cursors)
+      
+    if (this.players[0]){
+      this.simulator(this.players[0],playerKeys[0]);
     }
-    if (this.players[1]) {
-      this.simulator(this.players[1]);
-      mario1.update(time, delta, this.players[1].cursors)
+    if (this.players[1]){
+      this.simulator(this.players[1],playerKeys[1]);
     }
+    // }
 
+    
+    
+    mario.update(time, delta, cursors)
     // try {
-    // cursors1?.up && cursors1?.down && cursors1?.left && cursors1?.right && 
+    cursors1?.up &&
+      cursors1?.down &&
+        cursors1?.left &&
+          cursors1?.right && mario1.update(time, delta, cursors1)
 
     // }catch(err){
     //   console.log("cursors1", cursors1)
     //   console.log(err)
     // }
-
-    for (let i = 0; i < this.players.length; i++) {
-      const player = this.players[i]
-      enemyGroup.update(time, delta, player.mario)
-      powerUpGroup.update(time, delta, player.mario)
-      player.mario.update(time, delta, player.cursors)
-    }
-
     enemyGroup.update(time, delta, mario)
     powerUpGroup.update(time, delta, mario)
     powerUpGroup.update(time, delta, mario1)
@@ -544,10 +498,7 @@ export default class MainScene extends Phaser.Scene {
 
     switch (name) {
       case 'mushroom':
-        params =
-          this.mario.powers.has(Large) || this.mario1.powers.has(Large)
-            ? [Flower, [Fire, Large], { type: 'super' }]
-            : [Mushroom, [Large], { type: 'super' }]
+        params = this.mario.powers.has(Large) || this.mario1.powers.has(Large) ? [Flower, [Fire, Large], { type: 'super' }] : [Mushroom, [Large], { type: 'super' }]
         break
       case 'star':
         params = [Star, [Invincible]]
@@ -561,33 +512,33 @@ export default class MainScene extends Phaser.Scene {
 
     const [PowerUp, Power, options, onOverlap] = params
     if (PowerUp) {
-      console.log('createPowerUp')
+      console.log("createPowerUp")
       const powerUp = new PowerUp({ scene: this, x, y, texture: 'atlas', ...options }).overlap(
         this.mario,
-        onOverlap ||
-          (() => {
-            for (let i = 0; i < Power.length; i++) {
-              // setTimeout(() => {
-              // if (!this.mario.powers.has(Power[i])) {
+        onOverlap || (() => {
+          for (let i = 0; i < Power.length; i++) {
+            // setTimeout(() => {
+            // if (!this.mario.powers.has(Power[i])) {
               this.mario.powers.add(Power[i], (PowerClass) => new PowerClass(this.mario))
               //   }
-              // }, 500*i)
-            }
-          })
+          // }, 500*i)
+          }
+          
+        })
       )
 
       const powerUp1 = new PowerUp({ scene: this, x, y, texture: 'atlas', ...options }).overlap(
         this.mario1,
-        onOverlap ||
-          (() => {
-            for (let i = 0; i < Power.length; i++) {
-              // setTimeout(() => {
-              //   if (!this.mario1.powers.has(Power[i])) {
-              this.mario1.powers.add(Power[i], (PowerClass) => new PowerClass(this.mario1))
-              //   }
-              // }, 500*i)
-            }
-          })
+        onOverlap || (() => {
+          for (let i = 0; i < Power.length; i++) {
+            // setTimeout(() => {
+            //   if (!this.mario1.powers.has(Power[i])) {
+                this.mario1.powers.add(Power[i], (PowerClass) => new PowerClass(this.mario1))
+            //   }
+            // }, 500*i)
+          }
+          
+        })
       )
 
       this.powerUpGroup.add(powerUp)
