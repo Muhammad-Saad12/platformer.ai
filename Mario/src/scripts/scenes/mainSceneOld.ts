@@ -253,7 +253,7 @@ addPlayer(playerState) {
     this.mario.powers
       .add(Move, () => new Move(this.mario))
       .add(Jump, () => new Jump(this.mario))
-      // .add(EnterPipe, () => new EnterPipe(this.cursors, this.dests, this.rooms))
+      .add(EnterPipe, () => new EnterPipe(this.cursors, this.dests, this.rooms))
       .add(HitBrick, () => new HitBrick(this.mario, ['up']))
 
       this.mario1.powers

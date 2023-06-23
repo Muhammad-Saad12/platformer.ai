@@ -4,6 +4,8 @@ import { onPlayerJoin, insertCoin, isHost, myPlayer } from "playroomkit";
 import { useEffect, useRef } from "react";
 import MainScene from './Mario/src/scripts/scenes/mainScene';
 import PreloadScene from './Mario/src/scripts/scenes/preloadScene';
+// import MainScene from "../../Mario/src/scripts/scenes/mainScene";
+// import PreloadScene from "../../Mario/src/scripts/scenes/preloadScene";
 
 const DEFAULT_WIDTH = 400;
 const DEFAULT_HEIGHT = 240;

@@ -8,14 +8,86 @@
     background: #222;
     margin-top: 20px;
     font-family: 'Anton', sans-serif;
+    overflow: hidden;
   }
   /* base */
   .container {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 35%;
+    /* left: 0; */
+    /* top: 0; */
+    /* transform-origin: -10% -10%; */
+    transform: scale(3.5);
   }
+
+@media screen and (max-width: 900px) {
+  .container {
+    top: 10%;
+    transform: scale(1.8);
+  }
+  
+}
+
+
+@media screen and (max-width: 680px) {
+  .container {
+    top: 17%;
+    transform: scale(1.2);
+  }
+}
+
+
+@media screen and (max-width: 600px) {
+  .container {
+    top: 35%;
+    transform: scale(0.6);
+  }
+}
+/* 
+@media screen and (max-width: 670px) {
+  .container {
+    top: 17%;
+    transform: scale(0.2);
+  }
+} */
+
+/* @media screen and (max-width: 700px) {
+  .container {
+    top: 17%;
+    transform: scale(1.52);
+  }
+} */
+
+@media screen and (max-width: 740px) {
+  .container {
+    top: 20%;
+    transform: scale(2);
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .container {
+    top: 35%;
+    transform: scale(2.4);
+  }
+}
+@media screen and (max-width: 920px) {
+  .container {
+    top: 17%;
+    transform: scale(1.9);
+  }
+}
+
+@media screen and (max-width: 844px) {
+  .container {
+    top: 17%;
+    transform: scale(1.9);
+  }
+}
+
   .snes {
     position: relative;
     width: 300px;
@@ -434,4 +506,6 @@
     top: -15px;
   }
   /**/
+
   
+

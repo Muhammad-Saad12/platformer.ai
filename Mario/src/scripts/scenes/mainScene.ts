@@ -463,6 +463,5 @@ export default class MainScene extends Phaser.Scene {
     //   this.restartGame(false)
     // }
     this.restartGame(false)
-
   }
 }
