@@ -48,7 +48,8 @@
     "babel-loader": "8.2.5",
     "phaser": "3.52.0",
     "playroomkit": "^0.0.22",
-    "tsyringe": "4.4.0"
+    "tsyringe": "4.4.0",
+    "webpack": "^4.46.0"
   },
   "resolutions": {
     "@babel/core": "7.19.6",
