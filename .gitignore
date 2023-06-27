@@ -3,3 +3,6 @@ build/**
 dist/**
 .next/**
 public/**
+
+node_modules
+yarn.lock
