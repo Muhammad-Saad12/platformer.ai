@@ -14,6 +14,7 @@
     "playroomkit": "^0.0.25",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-screen-orientation": "^0.0.4",
     "react-scripts": "5.0.1",
     "typescript": "^3.9.6",
     "web-vitals": "^2.1.4"

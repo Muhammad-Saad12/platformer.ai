@@ -1,10 +1,15 @@
+import "./snes.css";
+
+import DeviceOrientation, { Orientation } from 'react-screen-orientation'
 // @ts-nocheck
 import {
   myPlayer,
   usePlayersList,
 } from "playroomkit";
 
-import "./snes.css";
+import rotateGif from "./assets/rotate.gif"
+import { useEffect } from "react";
+
 // import "./nes.css";
 
 const TestingWasdController = ({ handleButtonPress }) => {
@@ -136,8 +141,36 @@ function DirectionButtons() {
     console.log(myPlayroomPlayer.getState("keyPress"));
   };
 
+  // useEffect(() => {
+  //   alert("begin mobile")
+  // }, [])
+
   return (
     <div>
+      <DeviceOrientation lockOrientation={'landscape'}>
+        {/* Will stay in DOM, but is only visible in portrait */}
+        <Orientation orientation='portrait' alwaysRender={false}>
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            zIndex: 99999,
+            width: '100vw',
+            height: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#00000050',
+            backdropFilter: 'blur(4px)',
+            color: 'white',
+            fontFamily: '"Russo One", sans'
+          }}>
+            <img src={rotateGif} />
+            <p>Please rotate your device</p>
+          </div>
+        </Orientation>
+      </DeviceOrientation>
       {/* <TestingWasdController handleButtonPress={handleButtonPress} /> */}
       <SnesController handleButtonPress={handleButtonPress} />
     </div>

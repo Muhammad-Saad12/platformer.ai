@@ -26,7 +26,7 @@ module.exports = {
       {
         test: /\.mjs$/,
         include: [
-          path.join(__dirname, '../node_modules/playroomkit'),
+          // path.join(__dirname, '../node_modules/playroomkit'),
           path.join(__dirname, '../../../node_modules/playroomkit'),
         ],
         // /node_modules\/playroomkit/,
