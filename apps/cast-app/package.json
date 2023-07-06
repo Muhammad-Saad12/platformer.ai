@@ -47,7 +47,7 @@
   "dependencies": {
     "babel-loader": "8.2.5",
     "phaser": "3.52.0",
-    "playroomkit": "^0.0.22",
+    "playroomkit": "0.0.25",
     "tsyringe": "4.4.0",
     "webpack": "^4.46.0"
   },

@@ -1,9 +1,10 @@
 import 'phaser'
+
 import MainScene from './scenes/mainScene'
 import PreloadScene from './scenes/preloadScene'
-
 // @ts-ignore
-import {  insertCoin } from "playroomkit";
+import { insertCoin } from "playroomkit";
+
 //400
 const DEFAULT_WIDTH = 400
 const DEFAULT_HEIGHT = 240
@@ -37,7 +38,7 @@ const config: Phaser.Types.Core.GameConfig = {
 
 window.addEventListener('load', async () => {
   try {
-    await insertCoin({streamMode:true});
+    await insertCoin({streamMode:true, baseUrl: 'https://controller-app.vercel.app/'});
   }
   catch(err){
     console.log("There was an error while insertingCoin:", err);   

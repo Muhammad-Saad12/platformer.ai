@@ -11,7 +11,7 @@
     "@types/react": "^18.2.12",
     "@types/react-dom": "^18.2.5",
     "phaser": "^3.52.0",
-    "playroomkit": "^0.0.22",
+    "playroomkit": "^0.0.25",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
