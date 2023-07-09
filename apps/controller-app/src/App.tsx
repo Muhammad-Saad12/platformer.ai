@@ -1,7 +1,24 @@
 // @ts-nocheck
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+  RouterProvider,
+  createBrowserRouter,
+} from "react-router-dom";
+
 import Mobile from './Mobile';
+import NippleController from './components/controllers/nipple';
 import { insertCoin } from "playroomkit";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Mobile />,
+  },
+  {
+    path: "/nipple",
+    element: <NippleController />,
+  },
+]);
 
 const App: React.FC = () => {
   const [isSdkLoading, setIsSdkLoading] = useState<boolean>(true);
@@ -55,7 +72,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <Mobile />
+      <RouterProvider router={router} />
     </div>
   );
 };
