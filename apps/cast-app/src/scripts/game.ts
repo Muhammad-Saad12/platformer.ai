@@ -38,7 +38,7 @@ const config: Phaser.Types.Core.GameConfig = {
 
 window.addEventListener('load', async () => {
   try {
-    await insertCoin({streamMode:true, baseUrl: 'https://controller-app.vercel.app/'});
+    await insertCoin({streamMode:true, baseUrl: 'http://192.168.120.3:3000/'});
   }
   catch(err){
     console.log("There was an error while insertingCoin:", err);   

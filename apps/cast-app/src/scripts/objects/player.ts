@@ -8,29 +8,29 @@ type Config = {
   y: number
   texture: string
   frame: string
-  // 玩家的能力
+  // player abilities
   allowPowers: Function[]
 }
 
 /**
- * 玩家
+ * player
  */
 export default class Player extends Phaser.GameObjects.Sprite {
   body: Phaser.Physics.Arcade.Body
   /**
-   * 能力管理
+   * capacity management
    */
   powers: PowerManage
   /**
-   * 是否死亡
+   * die condition
    */
   dead = false
   /**
-   * 是否受保护
+   * is protected ?
    */
   protected = false
   /**
-   * 玩家动画 key 后缀
+   * Player animation cycle suffix
    */
   animSuffix = ''
 
@@ -44,7 +44,7 @@ export default class Player extends Phaser.GameObjects.Sprite {
   }
 
   /**
-   * 创建玩家行走跳跃等各种状态下的动画
+   * Create animations for players in various states such as walking and jumping
    */
   private makeAnimaions() {
     const config = {
@@ -154,14 +154,14 @@ export default class Player extends Phaser.GameObjects.Sprite {
 
     this.powers.allowPowers.some((name) => this.powers.get(name)?.update?.(time, delta, this, cursors))
 
-    // 如果不在地图的可视范围内则死亡
+    // Dies if out of view of the map
     if (this.x < 0 || this.y > this.scene.sys.game.canvas.height) {
       this.die()
     }
   }
 
   /**
-   * 玩家死亡
+   * when die
    */
   @lives(-1)
   die() {

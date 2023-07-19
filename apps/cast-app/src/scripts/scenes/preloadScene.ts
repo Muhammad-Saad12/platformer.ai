@@ -15,6 +15,9 @@ export default class PreloadScene extends Phaser.Scene {
       progress.destroy()
     })
 
+    // loading the character indicator
+    this.load.image('player-indicator', 'assets/images/player.png')
+    
     // 背景
     this.load.image('background-clouds', 'assets/images/clouds.png')
 
