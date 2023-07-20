@@ -40,7 +40,7 @@ window.addEventListener('load', async () => {
   try {
     await insertCoin({
       streamMode:true, 
-      baseUrl: process.env.NODE_ENV==="development" ? 'http://localhost:3000/' : undefined
+      baseUrl: process.env.NODE_ENV==="development" ? 'http://localhost:3000/' : "https://controller-app.vercel.app"
     });
   }
   catch(err){
