@@ -35,6 +35,7 @@ export default class MainScene extends Phaser.Scene {
   NPlayerCursor:any []
   worldLayer: Phaser.Tilemaps.TilemapLayer
   brick: Brick
+  indicator : Phaser.GameObjects.Image
 
   constructor() {
     super({ key: 'MainScene' })
@@ -177,11 +178,13 @@ export default class MainScene extends Phaser.Scene {
   create(sceneData: SceneData) {
     // @ts-ignore debug
     window.__myGame = this
-
+    
     const map = this.make.tilemap({ key: 'map' })
     const tileset = map.addTilesetImage('SuperMarioBros-World1-1', 'tiles')
     const worldLayer = map.createLayer('world', tileset).setCollisionByProperty({ collide: true })
     this.worldLayer = worldLayer
+    this.indicator = this.add.image(20, 20, 'player-indicator');
+    this.indicator.setScale(0.0125);
 
     // 添加背景音乐
     this.music = this.sound.add('overworld')
@@ -289,8 +292,13 @@ export default class MainScene extends Phaser.Scene {
     animatedTiles.update(delta)
     hud.update()
 
+
+
     for (let i = 0; i < this.players.length; i++) {
       const player = this.players[i]
+      //set indicator
+      this.indicator.setX(player.mario.x < this.game.config.width ? player.mario.x : parseInt(String(this.game.config.width)) - 50)
+      this.indicator.setY(player.mario.y - 50)
       console.log("player", player) 
       enemyGroup.update(time, delta, player.mario)
       if (player.mario.body) {
