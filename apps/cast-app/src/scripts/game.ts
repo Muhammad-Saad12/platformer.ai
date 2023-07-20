@@ -38,7 +38,10 @@ const config: Phaser.Types.Core.GameConfig = {
 
 window.addEventListener('load', async () => {
   try {
-    await insertCoin({streamMode:true, baseUrl: 'http://localhost:3000/'});
+    await insertCoin({
+      streamMode:true, 
+      baseUrl: process.env.NODE_ENV==="development" ? 'http://localhost:3000/' : undefined
+    });
   }
   catch(err){
     console.log("There was an error while insertingCoin:", err);   
