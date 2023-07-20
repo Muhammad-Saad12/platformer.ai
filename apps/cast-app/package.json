@@ -2,7 +2,7 @@
   "name": "cast-app",
   "version": "3.24.1",
   "description": "Phaser 3 starter template with TypeScript and webpack.",
-  "homepage": "https://github.com/yandeu/phaser-project-template#readme",
+  "homepage": ".",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --port 9000 --config webpack/webpack.dev.js",
