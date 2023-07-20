@@ -1,22 +1,20 @@
-import config from '../config'
-import AnimatedTiles from '../helpers/animatedTiles'
-import Debug from '../helpers/debug'
-import CountDown from '../helpers/countdown'
+import { Enemy, EnemyGroup, EnemyName } from '../objects/enemies'
+import { EnterPipe, Fire, HitBrick, Invincible, Jump, Large, Move } from '../powers'
+import { Flower, Mushroom, PowerUpGroup, Star } from '../objects/powerUps'
+// @ts-ignore
+import { insertCoin, isHost, myPlayer, onPlayerJoin } from 'playroomkit'
 
-import Hud from '../objects/hud'
-import Player from '../objects/player'
+import AnimatedTiles from '../helpers/animatedTiles'
 import Brick from '../objects/brick'
 import CoinSpin from '../objects/coinSpin'
+import CountDown from '../helpers/countdown'
+import Debug from '../helpers/debug'
 import Flag from '../objects/flag'
-import { Enemy, EnemyGroup, EnemyName } from '../objects/enemies'
-import { PowerUpGroup, Mushroom, Flower, Star } from '../objects/powerUps'
-
-import { Move, Jump, Large, Fire, Invincible, EnterPipe, HitBrick } from '../powers'
+import Hud from '../objects/hud'
+import Player from '../objects/player'
 import { arrayProps2ObjProps } from '../utils'
+import config from '../config'
 import { container } from 'tsyringe'
-
-// @ts-ignore
-import { onPlayerJoin, insertCoin, isHost, myPlayer } from 'playroomkit'
 
 type SceneData = {
   [prop: string]: any
@@ -35,11 +33,27 @@ export default class MainScene extends Phaser.Scene {
   NPlayerCursor:any []
   worldLayer: Phaser.Tilemaps.TilemapLayer
   brick: Brick
-  indicator : Phaser.GameObjects.Image
+  indicator: Phaser.GameObjects.Image
 
   constructor() {
     super({ key: 'MainScene' })
   }
+
+  getRelativePositionToCanvas(gameObject, camera=this.cameras.main) {
+    return {
+      x: (gameObject.x - camera.worldView.x) * camera.zoom,
+      y: (gameObject.y - camera.worldView.y) * camera.zoom
+    }
+  }
+
+  calculateAbsolutePosition(posObject, camera=this.cameras.main) {
+    return {
+      x: (camera.worldView.x + posObject.x) * camera.zoom,
+      y: (camera.worldView.y + posObject.y) * camera.zoom
+    }
+  }
+
+  
 
   addingPlayerCursors() {
     const offset = this.players.length * 10;
@@ -86,7 +100,7 @@ export default class MainScene extends Phaser.Scene {
     console.log("printing playerstate",playerState)
     console.log("printing players",this.players);
 
-    let existingPlayerIndex = Array.isArray(this.players) ? this.players.findIndex((p) => p.state.id === playerState.id) : -1
+    let existingPlayerIndex = Array.isArray(this.players) ? this.players.findIndex((p) => p.id === playerState.id) : -1
 
     const cursors = this.addingPlayerCursors();
     const mario = new Player({
@@ -109,6 +123,13 @@ export default class MainScene extends Phaser.Scene {
     const endPoint = this.worldLayer.findByIndex(5)
     // 终点旗杆
     new Flag(this, endPoint.pixelX, endPoint.pixelY).overlap(mario, () => this.restartGame(false))
+
+    const indicator = this.add.image(10, 10, '');
+    indicator.setTexture(`${playerState.id}-photo`);
+    this.textures.addBase64(`${playerState.id}-photo`, playerState.getProfile().photo).once(Phaser.Textures.Events.LOAD, () => {
+      indicator.setTexture(`${playerState.id}-photo`);
+    });
+    indicator.setScale(0.1);    
 
     mario.powers
       .add(Move, () => new Move(mario))
@@ -147,6 +168,7 @@ export default class MainScene extends Phaser.Scene {
       state: playerState,
       cursors,
       mario,
+      indicator,
     })
   } 
   else if (this.players[existingPlayerIndex]) {
@@ -183,8 +205,6 @@ export default class MainScene extends Phaser.Scene {
     const tileset = map.addTilesetImage('SuperMarioBros-World1-1', 'tiles')
     const worldLayer = map.createLayer('world', tileset).setCollisionByProperty({ collide: true })
     this.worldLayer = worldLayer
-    this.indicator = this.add.image(20, 20, 'player-indicator');
-    this.indicator.setScale(0.0125);
 
     // 添加背景音乐
     this.music = this.sound.add('overworld')
@@ -293,13 +313,10 @@ export default class MainScene extends Phaser.Scene {
     hud.update()
 
 
-
+    
     for (let i = 0; i < this.players.length; i++) {
       const player = this.players[i]
-      //set indicator
-      this.indicator.setX(player.mario.x < this.game.config.width ? player.mario.x : parseInt(String(this.game.config.width)) - 50)
-      this.indicator.setY(player.mario.y - 50)
-      console.log("player", player) 
+      // console.log("player", player) 
       enemyGroup.update(time, delta, player.mario)
       if (player.mario.body) {
         // player.mario.body.checkCollision.none = false
@@ -307,6 +324,15 @@ export default class MainScene extends Phaser.Scene {
         player.mario.update(time, delta, player.cursors)
       }
       this.simulator(player)
+
+      //set indicator
+      const relativePosition = this.getRelativePositionToCanvas(player.mario)
+      if (relativePosition.x <= 0 + 20) player.indicator.x = this.calculateAbsolutePosition({x:20}).x
+      else if (relativePosition.x <= this.cameras.main.width - 20) player.indicator.x = player.mario.x
+      else player.indicator.x = this.calculateAbsolutePosition({x:400-20}).x
+      
+      player.indicator.y = player.mario.y - 20
+
     }
 
   }

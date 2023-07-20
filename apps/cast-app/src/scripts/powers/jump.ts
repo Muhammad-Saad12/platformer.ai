@@ -1,4 +1,5 @@
-import { Power, Large } from './index'
+import { Large, Power } from './index'
+
 import Player from '../objects/player'
 
 const defaultOptions = {
@@ -32,8 +33,8 @@ export class Jump implements Power {
   }
 
   public update(time: number, delta: number, player: Player, cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
-    console.log("player in jump update:", player)
-    console.log("playerBody:", player.body)
+    // console.log("player in jump update:", player)
+    // console.log("playerBody:", player.body)
 
     const { vy, jumpDuration } = this.options
     const animSuffix = player.animSuffix
