@@ -112,6 +112,31 @@ const RightAxis = ({onButtonPress}) => {
     )
 }
 
+const Button = ({onButtonPress}) => {
+    return (
+        <button style={{
+            width: '10rem',
+            height: '10rem'
+        }}
+                    // all events supported by nipplejs are available as callbacks
+            // see https://github.com/yoannmoinet/nipplejs#start
+            onTouchStart={(evt) => {
+                let toSend:any = {
+                    pressed: true,
+                };
+                onButtonPress('btn-0', toSend)
+            }}
+            onTouchEnd={(evt) => {
+                let toSend:any = {
+                    pressed: false,
+                };
+                onButtonPress('btn-0', toSend, true)
+            }}
+        
+        >0</button>
+    )
+}
+
 const NippleController = () => {
     const myPlayroomPlayer = myPlayer();
 
@@ -135,10 +160,7 @@ const NippleController = () => {
             flexDirection: 'row',
             gap: '5px'
         }}>
-        <button style={{
-            width: '10rem',
-            height: '10rem'
-        }}>0</button>
+        <Button onButtonPress={handleButtonPress} />
         <button style={{
             width: '10rem',
             height: '10rem'

@@ -40,6 +40,16 @@ const App: React.FC = () => {
     initializeSdk();
   }, []);
 
+  const [isKicked] = useMyPlayer("isKicked")
+
+  useEffect(() => {
+    // disconnect SDK ?
+    if (isKicked){
+      window.location.hash = '';
+      window.location.reload()
+    }
+  }, [isKicked])
+
 
   const hash = window.location.hash?.substring(1);
 
