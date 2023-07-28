@@ -112,7 +112,7 @@ const RightAxis = ({onButtonPress}) => {
     )
 }
 
-const Button = ({onButtonPress}) => {
+const Button = ({index, onButtonPress}) => {
     return (
         <button style={{
             width: '10rem',
@@ -124,16 +124,16 @@ const Button = ({onButtonPress}) => {
                 let toSend:any = {
                     pressed: true,
                 };
-                onButtonPress('btn-0', toSend)
+                onButtonPress(`btn-${index}`, toSend)
             }}
             onTouchEnd={(evt) => {
                 let toSend:any = {
                     pressed: false,
                 };
-                onButtonPress('btn-0', toSend, true)
+                onButtonPress(`btn-${index}`, toSend, true)
             }}
         
-        >0</button>
+        >{index}</button>
     )
 }
 
@@ -160,19 +160,10 @@ const NippleController = () => {
             flexDirection: 'row',
             gap: '5px'
         }}>
-        <Button onButtonPress={handleButtonPress} />
-        <button style={{
-            width: '10rem',
-            height: '10rem'
-        }}>1</button>
-        <button style={{
-            width: '10rem',
-            height: '10rem'
-        }}>2</button>
-        <button style={{
-            width: '10rem',
-            height: '10rem'
-        }}>3</button>
+        <Button index={0} onButtonPress={handleButtonPress} />
+        <Button index={1} onButtonPress={handleButtonPress} />
+        <Button index={2} onButtonPress={handleButtonPress} />
+        <Button index={3} onButtonPress={handleButtonPress} />
         </div>
         <RightAxis onButtonPress={handleButtonPress} />
     </div>
