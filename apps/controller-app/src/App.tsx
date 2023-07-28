@@ -4,10 +4,13 @@ import {
   RouterProvider,
   createBrowserRouter,
 } from "react-router-dom";
+import {
+  insertCoin,
+  myPlayer,
+} from "playroomkit";
 
 import Mobile from './Mobile';
 import NippleController from './components/controllers/nipple';
-import { insertCoin } from "playroomkit";
 
 const router = createBrowserRouter([
   {
@@ -40,7 +43,7 @@ const App: React.FC = () => {
     initializeSdk();
   }, []);
 
-  const [isKicked] = useMyPlayer("isKicked")
+  const isKicked = myPlayer()?.getState("isKicked")
 
   useEffect(() => {
     // disconnect SDK ?
