@@ -225,7 +225,7 @@ const PubgController = () => {
    </div>
 </div>
 
-<div style={{display: 'flex', zIndex: 2, flexDirection: 'row', position: 'absolute', top: 0, height: 'auto', width: '100%'}}>
+<div style={{display: 'flex', zIndex: 2, flexDirection: 'row', position: 'absolute', top: 0, height: 'auto', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
     <Button title={"START"} index={9} onButtonPress={handleButtonPress} />
 </div>
 
