@@ -6,7 +6,7 @@
   }
   body {
     background: #222;
-    margin-top: 20px;
+    /* margin-top: 20px; */
     font-family: 'Anton', sans-serif;
     overflow: hidden;
   }

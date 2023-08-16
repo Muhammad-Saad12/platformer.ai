@@ -11,6 +11,7 @@ import {
 
 import Mobile from './Mobile';
 import NippleController from './components/controllers/nipple';
+import PubgController from './components/controllers/pubg';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: "/nipple",
     element: <NippleController />,
+  },
+  {
+    path: "/pubg",
+    element: <PubgController />,
   },
 ]);
 
