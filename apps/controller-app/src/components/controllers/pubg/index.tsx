@@ -14,9 +14,10 @@ const LeftAxis = ({ onButtonPress }) => {
     <ReactNipple
       options={{ 
         mode: 'semi',
-        catchDistance: 200,
         color:'white',
         position: {left: '50%', top: '50%'},
+        catchDistance:'2',
+        
     }}
       style={{
         outline:'2px red dotted',
@@ -102,6 +103,7 @@ const Button = ({ title, index, onButtonPress,color}) => {
   return (
     <button
       style={{
+        zIndex:4,
         width: buttonSize,
         height: buttonSize,
         backgroundColor: color,
@@ -117,7 +119,12 @@ const Button = ({ title, index, onButtonPress,color}) => {
         let toSend = {
           pressed: true,
         };
-        onButtonPress(`btn-${index}`, toSend);
+        if (Array.isArray(index)) {
+          onButtonPress(`btn-${index.join(",")}`, toSend)
+        }
+        else {
+          onButtonPress(`btn-${index}`, toSend);
+        }
       }}
       onTouchEnd={(evt) => {
         let toSend = {
@@ -131,78 +138,8 @@ const Button = ({ title, index, onButtonPress,color}) => {
   );
 };
 
-const Button1 = ({ index, onButtonPress }) => {
-    const buttonSize = '35px';
-  
-    return (
-      <button
-        style={{
-          width: buttonSize,
-          height: buttonSize,
-          backgroundColor: '#DB0000',
-          
-          border: '2px solid #757575',
-          outline: 'none',
-          cursor: 'pointer',
-          fontSize: '10px',
-          color:'white',
-          margin:'0px 15px'
-        }}
-        onTouchStart={(evt) => {
-          let toSend = {
-            pressed: true,
-          };
-          onButtonPress(`btn-${index}`, toSend);
-        }}
-        onTouchEnd={(evt) => {
-          let toSend = {
-            pressed: false,
-          };
-          onButtonPress(`btn-${index}`, toSend, true);
-        }}
-      >
-        {index}
-      </button>
-    );
-  };
-  
 
-  const Button2 = ({ index, onButtonPress }) => {
-    const buttonSize = '30px';
-    const buttonSizeWidth = '100px';
   
-    return (
-      <button
-        style={{
-          width: buttonSizeWidth,
-          height: buttonSize,
-          backgroundColor: '#ededed',
-          borderRadius: '12rem 12rem  0 0',
-          border: '2px solid #757575',
-          outline: 'none',
-          cursor: 'pointer',
-          fontSize: '20px',
-          margin:'0px 10px',
-          
-        }}
-        onTouchStart={(evt) => {
-          let toSend = {
-            pressed: true,
-          };
-          onButtonPress(`btn-${index}`, toSend);
-        }}
-        onTouchEnd={(evt) => {
-          let toSend = {
-            pressed: false,
-          };
-          onButtonPress(`btn-${index}`, toSend, true);
-        }}
-      >
-        {index}
-      </button>
-    );
-  };
-
 const PubgController = () => {
   const myPlayroomPlayer = myPlayer();
 
@@ -215,7 +152,7 @@ const PubgController = () => {
 
   return (
     <>
-    <div style={{display: 'flex', flexDirection: 'row', position: 'absolute', zIndex: -1, height: '100%', width: '100%'}}>
+    <div style={{display: 'flex', flexDirection: 'row', position: 'absolute', zIndex: 2, height: '100%', width: '100%'}}>
    <div style={{display: 'flex', height: '100%', flex: '0.5'}}>
       <LeftAxis onButtonPress={handleButtonPress}/>
    </div>
@@ -225,14 +162,76 @@ const PubgController = () => {
    </div>
 </div>
 
-<div style={{display: 'flex', zIndex: 2, flexDirection: 'row', position: 'absolute', top: 0, height: 'auto', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
+<div style={{display: 'flex', zIndex: 3000, flexDirection: 'row', position: 'absolute', top: 0, height: 'auto', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
     <Button title={"START"} index={9} onButtonPress={handleButtonPress} />
 </div>
 
+<div style={{
+  display:'flex',
+  flexDirection:'row',
+  zIndex:0,
+}}>
+
+<div style={{
+   display:'flex',
+   flexDirection:'column',
+   alignContent:'center',
+   justifyContent:'center',
+   
+   width:'15vw',
+   height:'10vh',
+   margin:'18% 0 0 0'
+}}>
+<Button title={"Quick Fire"} index={7} onButtonPress={handleButtonPress} />
+</div>
+
+<div style={{
+  margin:'0 0 0 35%',
+  
+  display:'flex',
+  flexDirection:'row',
+  height:'50vh',
+  alignContent:'flex-end',
+  
+  
+
+}}>
+
+
+  <div style={{margin:'45% 0 0 10%',zIndex:'4',}}> <Button title={"Reload"} index={2} onButtonPress={handleButtonPress} /></div>
+  
+  <div style={{
+    display:'flex',
+    flexDirection:'column',
+    alignContent:'flex-end',
+    justifyContent:'flex-end',
+    gap:'20px',
+    margin:'20% 0 0 0 '
+  }}>
+    <Button title={"Fire"} index={[6,7]} onButtonPress={handleButtonPress} />
+    <div style={{
+      margin:'0 0 0 20%',
+      zIndex:'4',
+    }}><Button title={"Crouch"} index={1} onButtonPress={handleButtonPress} /></div>
+  </div>
+
+  <div style={{
+    display:'flex',
+    flexDirection:'column',
+    alignContent:'center',
+    justifyContent:'center',
+    margin:'50% 0 0 0 ',
+    gap:'20px'
+  }}>
+    <Button title={"Scope"} index={6} onButtonPress={handleButtonPress} />
+    <Button title={"Jump"} index={0} onButtonPress={handleButtonPress} />
+  </div>
+
+ </div>
+</div>
 </>
     
   );
 };
 
 export default PubgController;
-
