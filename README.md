@@ -4,7 +4,7 @@ A sample game featuring a multiplayer Mario game using PlayroomKit. The game run
 ## Technologies used
 - Turbo monorepo
 - React for the controller app
-- Phaser3 for the Mario game
+- Phaser3 for the cast game
 - PlayroomKit for networking
 
 ## Related article
