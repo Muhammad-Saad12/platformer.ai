@@ -45,9 +45,12 @@
     "workbox-webpack-plugin": "^5.1.3"
   },
   "dependencies": {
+    "@babel/preset-react": "^7.22.5",
     "babel-loader": "8.2.5",
     "phaser": "3.52.0",
     "playroomkit": "0.0.25",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "tsyringe": "4.4.0",
     "webpack": "^4.46.0"
   },
