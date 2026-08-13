@@ -1,5 +1,7 @@
 {
-    "private": true,
-    "packageManager": "yarn@1.22.19",
-    "workspaces": ["apps/*"]
+  "private": true,
+  "packageManager": "yarn@1.22.19",
+  "workspaces": [
+    "apps/*"
+  ]
 }
